@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generatore Ri.Ba. CBI</title>
+    <link rel="icon" href="../img/logo.ico" />
+    <style>
+      :root {
+        --bg: #f6f1e9;
+        --panel: #fffaf2;
+        --ink: #1d1b16;
+        --muted: #6e6459;
+        --accent: #2f5d50;
+        --line: #e2d8c9;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at 10% 10%, #fffdf8 0, #f6f1e9 50%, #efe6d7 100%);
+      }
+      header {
+        padding: 24px 32px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .sub {
+        color: var(--muted);
+      }
+      main {
+        padding: 24px 32px 48px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+      }
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      input, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 14px;
+        background: #fff;
+      }
+      textarea { min-height: 68px; resize: vertical; }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: end;
+      }
+      button {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button.secondary {
+        background: #b69b7d;
+      }
+      .actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+      }
+      .small { font-size: 12px; color: var(--muted); }
+      .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+      @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Generatore Ri.Ba. CBI</h1>
+      <div class="sub">Basato su CBI-RIB-001 v6.02. Compila i dati fissi e seleziona il CSV.</div>
+    </header>
+    <main>
+      <div class="grid">
+        <section class="card">
+          <h2>File</h2>
+          <div class="row">
+            <div>
+              <label>CSV input</label>
+              <input id="csvPath" type="text" placeholder="Seleziona il file CSV" />
+            </div>
+            <button id="pickCsv">Sfoglia</button>
+          </div>
+          <div style="height: 12px"></div>
+          <div class="row">
+            <div>
+              <label>Output</label>
+              <input id="outPath" type="text" placeholder="Seleziona il file di output" />
+            </div>
+            <button id="pickOut" class="secondary">Salva come</button>
+          </div>
+          <div style="height: 12px"></div>
+          <button id="generate">Genera tracciato</button>
+          <div id="status" class="small" style="margin-top: 8px"></div>
+        </section>
+
+        <section class="card">
+          <h2>Testata (IB)</h2>
+          <label>Codice SIA mittente</label>
+          <input id="mittenteSia" type="text" value="Q7868" />
+          <label>ABI assuntrice</label>
+          <input id="riceventeAbi" type="text" value="02008" />
+          <label>Data creazione (GGMMAA)</label>
+          <input id="dataCreazione" type="text" placeholder="es. 110226" />
+          <label>Nome supporto (20)</label>
+          <input id="nomeSupporto" type="text" value="CBIRIB1710181601    " />
+        </section>
+
+        <section class="card">
+          <h2>Record 14</h2>
+          <label>ABI assuntrice</label>
+          <input id="abiAssuntrice" type="text" value="02008" />
+          <label>CAB assuntrice</label>
+          <input id="cabAssuntrice" type="text" value="24404" />
+          <label>Conto accredito (12)</label>
+          <input id="contoAccredito" type="text" value="000103630981" />
+          <label>Codice azienda (5)</label>
+          <input id="codiceAzienda" type="text" value="00000" />
+        </section>
+
+        <section class="card">
+          <h2>Record 20 / 51 / 50</h2>
+          <label>Descrizione creditore (record 20)</label>
+          <textarea id="descrCreditore">MEDIAPRINT S.R.L. VIA CERTOSA SNC NERETO</textarea>
+          <label>Denominazione creditore (record 51, 20)</label>
+          <input id="denominazioneCreditore" type="text" value="MEDIAPRINT S.R.L." />
+          <label>CF/P.IVA creditore (record 50, 16)</label>
+          <input id="cfCreditore" type="text" value="00865490676" />
+        </section>
+
+        <section class="card">
+          <h2>Record 70</h2>
+          <label>Indicatore documento (101)</label>
+          <input id="indicatoreDoc" type="text" placeholder="1, 2 o vuoto" />
+          <label>Flag esito (102)</label>
+          <input id="flagEsito" type="text" placeholder="1, 2 o vuoto" />
+          <label>Flag stampa (103)</label>
+          <input id="flagStampa" type="text" placeholder="4 o vuoto" />
+        </section>
+
+        <section class="card">
+          <h2>Mapping CSV (0-based)</h2>
+          <div class="small">Colonne attese: nome, indirizzo, CAP, comune, prov, CF/PIVA, importo, scadenza, riferimento, ABI dom, CAB dom, num ricevuta</div>
+          <label>Nome debitore</label><input id="m_nomeDebitore" type="number" value="0" />
+          <label>Indirizzo</label><input id="m_indirizzo" type="number" value="1" />
+          <label>CAP</label><input id="m_cap" type="number" value="2" />
+          <label>Comune</label><input id="m_comune" type="number" value="3" />
+          <label>Provincia</label><input id="m_provincia" type="number" value="4" />
+          <label>CF/PIVA debitore</label><input id="m_cfDebitore" type="number" value="5" />
+          <label>Importo</label><input id="m_importo" type="number" value="6" />
+          <label>Scadenza</label><input id="m_scadenza" type="number" value="7" />
+          <label>Riferimento debito</label><input id="m_riferimentoDebito" type="number" value="8" />
+          <label>ABI domiciliataria</label><input id="m_abiDomiciliataria" type="number" value="9" />
+          <label>CAB domiciliataria</label><input id="m_cabDomiciliataria" type="number" value="10" />
+          <label>Numero ricevuta</label><input id="m_numeroRicevuta" type="number" value="11" />
+        </section>
+      </div>
+
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

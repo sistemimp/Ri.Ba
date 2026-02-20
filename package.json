@@ -1,0 +1,43 @@
+{
+  "name": "riba-generator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generatore tracciato Ri.Ba. CBI",
+  "author": "Alex Olivieri",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^26.7.0"
+  },
+  "build": {
+    "appId": "it.mediaprint.riba",
+    "productName": "Generatore Ri.Ba. CBI",
+    "files": [
+      "src/**/*",
+      "img/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "img",
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "img/logo.ico"
+    }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.3"
+  },
+  "publish": [
+  {
+    "provider": "generic",
+    "url": "https://gestionale.mediaprint.it/ElectronAppUpdate/RiBA"
+  }
+]
+}
